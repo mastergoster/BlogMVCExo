@@ -2,11 +2,14 @@
 namespace App\Controller;
 
 use \Core\Controller\Controller;
+use \App\Model\Entity\UserEntity;
+use \App\Model\Entity\User_infosEntity;
 
 class UsersController extends Controller
 {
     public function __construct() {
         $this->loadModel('user');
+        $this->loadModel('user_infos');
     }
 
     public function login(): void
@@ -48,25 +51,30 @@ class UsersController extends Controller
                     header('location: /inscription');
                     exit();// PAS OUBLIERRRRRRRRRRR!!!!!!!!
                 }
-                //On Sécurise chaque donnée de $_POST et on les stocke dans $fields[]
-                $fields[$value] = htmlspecialchars($_POST[$value]);
             }
 
-            if($fields['mail'] == $_POST["mailVerify"]) {// Comparaison d'égalité
-                if($fields['password'] == $_POST["passwordVerify"]) {// Comparaison d'égalité
-                    //Hashage du password $fields["password]
-                    $fields['password'] = password_hash($fields['password'], PASSWORD_BCRYPT);
-                    //Création d'un token
-                    $token = substr(md5(uniqid()), 0, 10);
+            $user = new UserEntity();
+            $user->hydrate($_POST);
+
+            $userInfos = new User_infosEntity();
+            $userInfos->hydrate($_POST);
+
+            if($user->getMail() == $_POST["mailVerify"]) {// Comparaison d'égalité
+                if(password_verify($_POST["passwordVerify"], $user->getPassword())) {// Comparaison d'égalité
 
                     //Création d'une date
                     $date = new \DateTime('NOW');
                     $date = $date->format('Y-m-d H:i:s');
         
-                    $fields['token']= $token;//Stockage du token dans $fieds["token"]
-                    $fields['createdAt']= $date;//Stockage de date dans $fields['createdAt']
+                    $user->setToken(substr(md5(uniqid()), 0, 10));//Stockage du token dans $fieds["token"]
+                    $user->setCreatedAt($date);//Stockage de date dans $fields['createdAt']
+                    $user->setVerify(1);
+
                     //Appel de la methode create de la Table Parente (core/Table.php)
-                    if($this->user->create($fields)) {
+                    if($this->user->create($user, true)) {
+                        $userInfos->setUser_id($this->user->last());
+                        $this->user_infos->create($userInfos, true);
+
                         $_SESSION['success'] = "Votre inscription à bien été prise en compte";
                     }
                     else {
@@ -84,22 +92,26 @@ class UsersController extends Controller
         if(null !== $_SESSION['user'] && $_SESSION['user']) {
             $file = 'profile';
             $page = 'Mon profil';
+            $userInfos = $this->user_infos->getUserInfosByid($_SESSION['user']->getId());
         }
         else {
             $file = 'login';
             $page = 'Connexion';
+            $userInfos = false;
         }
         return $this->render('user/'.$file, [
             'page' => $page,
-            'message' => $message
+            'message' => $message,
+            'userInfos' => $userInfos
         ]);
     }
 
     public function updateUser() {
+
         if(count($_POST) > 0) {
             $id = (int) array_pop($_POST);//Stockage de la dernière case de $_POST dans $id
             //Mise à jours bdd grace à methode update de /core/Table.php
-            $bool = $this->user->update($id, 'id', $_POST);
+            $bool = $this->user_infos->update($id, 'user_id', $_POST);
             //Mise à jours de la SESSION['user']
             $user = $this->user->getUserByid($id);
             $_SESSION['user'] = $user;

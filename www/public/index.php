@@ -9,6 +9,7 @@ $app::load();
 
 $app->getRouter($basePath)
     ->get('/blog', 'Post#all', 'home')
+    ->get('/boutique/panier', 'cart#index', 'cart')
     ->get('/categories', 'Category#all', 'categories')
     ->get('/category/[*:slug]-[i:id]', 'Category#show', 'category')
     ->get('/article/[*:slug]-[i:id]', 'post#show', 'post')

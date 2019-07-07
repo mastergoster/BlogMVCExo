@@ -11,25 +11,36 @@ class BeerEntity extends Entity
     private $title;
     private $img;
     private $content;
-    private $price;
+    private $priceHT;
+    private $stock;
 
-    public function getId() {
+    public function getId(): int
+    {
         return $this->id;
     }
 
-    public function getTitle() {
+    public function getTitle(): string
+    {
         return $this->title;
     }
 
-    public function getImg() {
+    public function getImg(): string
+    {
         return $this->img;
     }
 
-    public function getContent() {
+    public function getContent(): string
+    {
         return $this->content;
     }
 
-    public function getPrice() {
-        return $this->price;
+    public function getPrice(): float
+    {
+        return $this->priceHT;
+    }
+
+    public function getStock(): int
+    {
+        return $this->stock;
     }
 }

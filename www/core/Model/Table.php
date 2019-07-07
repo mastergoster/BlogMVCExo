@@ -31,31 +31,34 @@ class Table
         return $this->query("SELECT MAX(id) as lastId FROM {$this->table}", null, true)->lastId;
     }
 
-    public function find($id)
+    public function find($id, $column = 'id')
     {
-        return $this->query("SELECT * FROM {$this->table} WHERE id=?", [$id], true);
+        return $this->query("SELECT * FROM {$this->table} WHERE $column=?", [$id], true);
     }
 
     public function all() {
         return $this->query("SELECT * FROM $this->table");
     }
 
-    public function create($fields){
-        $sql_parts = [];// Création d'un tableau vide
-        $attributes = [];// Création d'un tableau vide
-        //On boucle sur le tableau associatif $fields
-        foreach($fields as $k => $v){
-            //$sql_parts[] = "firstname = ?"(si $k = "firstname" etc..)
-            $sql_parts[] = "$k = ?";
-            //echo $k;
-            //$attributes[] = "Bob = ?"(si $v = "Bob" etc..)
-            $attributes[] = $v;
-            //echo $v;
+    public function create($fields, $class=false){
+        $sql_parts = [];
+        $attributes = [];
+        if($class) {
+            $methods = get_class_methods($fields);
+            $array = [];
+            foreach($methods as $value) {
+                if(strrpos($value, 'get') === 0) {
+                    $column = strtolower(explode('get', $value)[1]);
+                    $array[$column] = $fields->$value();
+                }                
+            }
+            $fields = $array;
         }
-        //On colle les cases du tableau $sql_parts avec un ", "
+        foreach($fields as $k => $v){
+            $sql_parts[] = "$k = ?";
+            $attributes[] = $v;
+        }
         $sql_part = implode(', ', $sql_parts);
-        
-        //Appel de la methode query juste en dessous
         return $this->query("INSERT INTO {$this->table} SET $sql_part", $attributes, true);
     }
 
