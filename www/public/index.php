@@ -17,13 +17,15 @@ $app->getRouter($basePath)
     ->get('/', 'Shop#index', 'shopIndex')
     ->get('/boutique', 'Shop#all', 'shopAll')
     ->get('/boutique/commande', 'Shop#purchaseOrder', 'shopPurchaseOrder')
-    ->get('/inscription', 'Users#subscribe', 'usersSubscribe')
+    
+    ->match('/inscription', 'Users#subscribe', 'usersSubscribe')
+    
     ->get('/login', 'Users#login', 'usersLogin')
     ->get('/user/logout', 'users#logout', 'userLogout')
     ->get('/user/profile', 'users#profile', 'userProfile')
     ->get('/contact', 'Shop#contact', 'shopContact')
     //POSTS URLS
-    ->post('/inscription', 'Users#subscribe', 'post_usersSubscribe')
+    
     ->post('/login', 'Users#login', 'post_usersLogin')
     ->post('/user/updateUser', 'users#updateUser', 'post_updateUser')
     ->post('/user/changePassword', 'users#changePassword', 'post_updateChangePassword')
