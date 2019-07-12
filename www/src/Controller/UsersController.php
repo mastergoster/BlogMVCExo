@@ -3,13 +3,13 @@ namespace App\Controller;
 
 use \Core\Controller\Controller;
 use \App\Model\Entity\UserEntity;
-use \App\Model\Entity\User_infosEntity;
+use \App\Model\Entity\UserInfosEntity;
 
 class UsersController extends Controller
 {
     public function __construct() {
         $this->loadModel('user');
-        $this->loadModel('user_infos');
+        $this->loadModel('UserInfos');
     }
 
     public function login(): void
@@ -56,7 +56,7 @@ class UsersController extends Controller
             $user = new UserEntity();
             $user->hydrate($_POST);
 
-            $userInfos = new User_infosEntity();
+            $userInfos = new UserInfosEntity();
             $userInfos->hydrate($_POST);
 
             if($user->getMail() == $_POST["mailVerify"]) {// Comparaison d'égalité
@@ -73,7 +73,7 @@ class UsersController extends Controller
                     //Appel de la methode create de la Table Parente (core/Table.php)
                     if($this->user->create($user, true)) {
                         $userInfos->setUser_id($this->user->last());
-                        $this->user_infos->create($userInfos, true);
+                        $this->UserInfos->create($userInfos, true);
 
                         $_SESSION['success'] = "Votre inscription à bien été prise en compte";
                     }
@@ -92,7 +92,7 @@ class UsersController extends Controller
         if(null !== $_SESSION['user'] && $_SESSION['user']) {
             $file = 'profile';
             $page = 'Mon profil';
-            $userInfos = $this->user_infos->getUserInfosByid($_SESSION['user']->getId());
+            $userInfos = $this->UserInfos->getUserInfosByid($_SESSION['user']->getId());
         }
         else {
             $file = 'login';
@@ -111,7 +111,7 @@ class UsersController extends Controller
         if(count($_POST) > 0) {
             $id = (int) array_pop($_POST);//Stockage de la dernière case de $_POST dans $id
             //Mise à jours bdd grace à methode update de /core/Table.php
-            $bool = $this->user_infos->update($id, 'user_id', $_POST);
+            $bool = $this->UserInfos->update($id, 'user_id', $_POST);
             //Mise à jours de la SESSION['user']
             $user = $this->user->getUserByid($id);
             $_SESSION['user'] = $user;

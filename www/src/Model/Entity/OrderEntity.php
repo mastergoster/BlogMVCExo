@@ -3,35 +3,35 @@ namespace App\Model\Entity;
 
 use Core\Model\Entity;
 
-class OrdersEntity extends Entity
+class OrderEntity extends Entity
 {
    private $id;
-   private $userinfos_id;
-   private $priceHT;
+   private $user_infos_id;
+   private $price_ht;
    private $port;
-   private $ordersTva;
-   private $created_at;
+   private $tva;
    private $status_id;
    private $token;
+   private $created_at;
 
    public function getId() {
        return $this->id;
    }
 
    public function getUserInfos() {
-       return $this->userInfos;
+       return $this->user_infos_id;
    }
 
-   public function getpriceHT() {
-       return $this->priceHT;
+   public function getPriceHt() {
+       return $this->price_ht;
    }
 
    public function getPort() {
        return $this->port;
    }
 
-   public function getOrdersTva() {
-       return $this->ordersTva;
+   public function getTva() {
+       return $this->tva;
    }
 
    public function getCreatedAt() {

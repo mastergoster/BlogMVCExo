@@ -3,13 +3,13 @@ namespace App\Model\Entity;
 
 use Core\Model\Entity;
 
-class Orders_lineEntity extends Entity
+class OrderLineEntity extends Entity
 {
    private $id;
    private $user_id;
    private $beer_id;
-   private $beerPriceHT;
-   private $beerQty;
+   private $beer_price_ht;
+   private $beer_qty;
    private $token;
 
    public function getId() {
@@ -24,12 +24,12 @@ class Orders_lineEntity extends Entity
         return $this->beer_id;
     }
 
-   public function getpriceHT() {
-       return $this->beerPriceHT;
+   public function getPriceHt() {
+       return $this->beer_price_ht;
    }
 
-   public function getQty() {
-       return $this->beerQty;
+   public function getBeerQty() {
+       return $this->beer_qty;
    }
 
    public function getToken() {

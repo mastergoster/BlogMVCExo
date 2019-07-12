@@ -5,7 +5,7 @@ use Core\Model\Entity;
 
 use Core\Controller\Helpers\TextController;
 
-class User_infosEntity extends Entity
+class UserInfosEntity extends Entity
 {
     private $id;
 
@@ -19,7 +19,7 @@ class User_infosEntity extends Entity
 
     private $city;
 
-    private $zipCode;
+    private $zip_code;
 
     private $country;
 
@@ -28,7 +28,7 @@ class User_infosEntity extends Entity
     /**
      * Get the value of id
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -36,7 +36,7 @@ class User_infosEntity extends Entity
     /**
      * Get the value of id
      */
-    public function getUser_id()
+    public function getUserId(): int
     {
         return $this->user_id;
     }
@@ -44,7 +44,7 @@ class User_infosEntity extends Entity
     /**
      * Get the value of name
      */
-    public function getFirstname()
+    public function getFirstname(): string
     {
         return $this->firstname;
     }
@@ -52,7 +52,7 @@ class User_infosEntity extends Entity
     /**
      * Get the value of slug
      */
-    public function getLastname()
+    public function getLastname(): string
     {
         return $this->lastname;
     }
@@ -60,31 +60,35 @@ class User_infosEntity extends Entity
     /**
      * Get the value of content
      */
-    public function getAddress()
+    public function getAddress(): string
     {
         return $this->address;
     }
 
-    public function getCity() {
+    public function getCity(): string
+    {
         return $this->city;
     }
 
-    public function getZipCode() {
-        return $this->zipCode;
+    public function getZipCode(): string
+    {
+        return $this->zip_code;
     }
 
-    public function getCountry() {
+    public function getCountry(): string
+    {
         return $this->country;
     }
 
-    public function getPhone() {
+    public function getPhone(): string
+    {
         return $this->phone;
     }
 
     /**
      * Set the value of id
      */
-    public function setId($id)
+    public function setId($id): void
     {
         $this->id = $id;
     }
@@ -92,7 +96,7 @@ class User_infosEntity extends Entity
     /**
      * Set the value of id
      */
-    public function setUser_id($user_id)
+    public function setUserId($user_id): void
     {
         $this->user_id = $user_id;
     }
@@ -100,7 +104,7 @@ class User_infosEntity extends Entity
     /**
      * Set the value of name
      */
-    public function setFirstname($firstname)
+    public function setFirstname($firstname): void
     {
         $this->firstname = $firstname;
     }
@@ -108,7 +112,7 @@ class User_infosEntity extends Entity
     /**
      * Set the value of slug
      */
-    public function setLastname($lastname)
+    public function setLastname($lastname): void
     {
         $this->lastname = $lastname;
     }
@@ -116,24 +120,28 @@ class User_infosEntity extends Entity
     /**
      * Set the value of content
      */
-    public function setAddress($address)
+    public function setAddress($address):void
     {
         $this->address = $address;
     }
 
-    public function setCity($city) {
+    public function setCity($city): void
+    {
         $this->city = $city;
     }
 
-    public function setZipCode($zipCode) {
-        $this->zipCode = $zipCode;
+    public function setZipCode($zipCode): void
+    {
+        $this->zip_code = $zipCode;
     }
 
-    public function setCountry($country) {
+    public function setCountry($country): void 
+    {
         $this->country = $country;
     }
 
-    public function setPhone($phone) {
+    public function setPhone($phone): void
+    {
         $this->phone = $phone;
     }
 }

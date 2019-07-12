@@ -15,7 +15,7 @@ class UserEntity extends Entity
 
     private $token;
 
-    private $createdAt;
+    private $created_at;
 
     private $verify;
 
@@ -44,7 +44,7 @@ class UserEntity extends Entity
     }
 
     public function getCreatedAt() {
-        return $this->createdAt;
+        return $this->created_at;
     }
 
     public function setMail(string $mail) {
@@ -61,7 +61,7 @@ class UserEntity extends Entity
     }
 
     public function setCreatedAt($createdAt) {
-        $this->createdAt = $createdAt;
+        $this->created_at = $createdAt;
     }
 
     public function setVerify($verify) {

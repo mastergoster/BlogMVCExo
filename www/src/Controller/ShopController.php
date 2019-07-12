@@ -32,13 +32,13 @@ class ShopController extends Controller
                     $qty[] = $value;
                 }
             }
-            $ids = implode($ids, ',');
+            $ids = implode(',', $ids);
 
             $beers = $this->beer->getAllInIds($ids);
 
             $orderTotal = 0;
             foreach($beers as $key => $value) {
-                $orderTotal += $value->getPrice() * constant('TVA') * $qty[$key];
+                $orderTotal += $value->getPriceHt() * constant('TVA') * $qty[$key];
             }
             
             return $this->render('shop/confirmationDeCommande', [

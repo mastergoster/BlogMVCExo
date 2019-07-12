@@ -8,7 +8,7 @@ class ConfigEntity extends Entity
 
     private $id;
 
-    private $date;
+    private $created_at;
 
     private $tva;
 
@@ -32,7 +32,7 @@ class ConfigEntity extends Entity
         return $this->ship_limit;
     }
 
-    public function getDate() {
-        return $this->date;
+    public function getCreatedAt() {
+        return $this->created_at;
     }
 }

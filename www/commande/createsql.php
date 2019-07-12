@@ -3,21 +3,35 @@ require_once '/var/www/vendor/autoload.php';
 
 $pdo = new PDO('mysql:host=labiere.mysql;dbname=blog', 'userblog', 'blogpwd');
 
-//Suppression de table 
+/**
+* Suppression de table
+*/ 
+$pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
 
+//blog
 $pdo->exec('DROP TABLE post_category');
 $pdo->exec('DROP TABLE post');
+$pdo->exec('DROP TABLE category');
+
+//utilisateur
 $pdo->exec('DROP TABLE user');
 $pdo->exec('DROP TABLE user_infos');
-$pdo->exec('DROP TABLE userInfos');
-$pdo->exec('DROP TABLE category');
+
+//shop
 $pdo->exec('DROP TABLE beer');
-$pdo->exec('DROP TABLE status');
 $pdo->exec('DROP TABLE config');
-$pdo->exec('DROP TABLE orders');
-$pdo->exec('DROP TABLE orders_line');
-$pdo->exec('DROP TABLE ordersLine');
-//creation tables
+
+//order
+$pdo->exec('DROP TABLE order');
+$pdo->exec('DROP TABLE status');
+$pdo->exec('DROP TABLE order_line');
+
+$pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+
+/**
+ * creation tables
+ * 
+ */
 
 echo "[";
 $etape = $pdo->exec("CREATE TABLE post(
@@ -58,43 +72,43 @@ $pdo->exec("CREATE TABLE `beer` (
     `title` varchar(255) NOT NULL,
     `img` text NOT NULL,
     `content` longtext NOT NULL,
-    `priceHT` float NOT NULL,
+    `price_ht` float NOT NULL,
     `stock` int(11) NULL,
     PRIMARY KEY(id)
   )");
   echo '||';
 
-  $pdo->exec("CREATE TABLE `orders` (
+  $pdo->exec("CREATE TABLE `order` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
-    `userInfos_id` int(11) NOT NULL,
-    `priceHT` float NOT NULL,
+    `user_infos_id` int(11) NOT NULL,
+    `price_ht` float NOT NULL,
     `port` float NOT NULL DEFAULT 0,
-    `ordersTva` float NOT NULL,
-    `created_at` timestamp NULL DEFAULT current_timestamp(),
+    `tva` float NOT NULL,
     `status_id` int(11) NOT NULL,
     `token` varchar(10) NOT NULL,
+    `created_at` timestamp NULL DEFAULT current_timestamp(),
     PRIMARY KEY(id)
   )");
 
-$pdo->exec("CREATE TABLE `orders_line` (
+$pdo->exec("CREATE TABLE `order_line` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `beer_id` int(11) NOT NULL,
-  `beerPriceHT` float NOT NULL,
-  `beerQTY` int(11) NOT NULL,
+  `beer_price_ht` float NOT NULL,
+  `beer_qty` int(11) NOT NULL,
   `token` varchar(10) NOT NULL,
   PRIMARY KEY(id)
 )");
 
-  $pdo->exec("CREATE TABLE `user` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
-    `mail` varchar(255) NOT NULL,
-    `password` varchar(255) NOT NULL,
-    `token` varchar(24) NOT NULL,
-    `createdAt` timestamp NULL DEFAULT current_timestamp(),
-    `verify` tinyint(1) NOT NULL DEFAULT 0,
-    PRIMARY KEY(id)
-  )");
+$pdo->exec("CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mail` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `token` varchar(24) NOT NULL,
+  `verify` tinyint(1) NOT NULL DEFAULT 0,  
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY(id)
+)");
 
 $pdo->exec("CREATE TABLE `user_infos` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -102,7 +116,7 @@ $pdo->exec("CREATE TABLE `user_infos` (
   `lastname` varchar(255) NOT NULL,
   `firstname` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
-  `zipCode` varchar(255) NOT NULL,
+  `zip_code` varchar(255) NOT NULL,
   `city` varchar(255) NOT NULL,
   `country` varchar(255) NOT NULL,
   `phone` varchar(255) NOT NULL,
@@ -111,49 +125,49 @@ $pdo->exec("CREATE TABLE `user_infos` (
 
 $pdo->exec("CREATE TABLE `status` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `status` varchar(255) NOT NULL,
+  `label` varchar(255) NOT NULL,
   PRIMARY KEY(id)
 )");
 
 $pdo->exec("CREATE TABLE `config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date` timestamp NULL DEFAULT current_timestamp(),
   `tva`float NOT NULL,
   `port`float NOT NULL,
   `ship_limit`float NOT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY(id)
 )");
 
-
-//vidage table
-$pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
-$pdo->exec('TRUNCATE TABLE post_category');
-$pdo->exec('TRUNCATE TABLE post');
-$pdo->exec('TRUNCATE TABLE user');
-$pdo->exec('TRUNCATE TABLE userInfos');
-$pdo->exec('TRUNCATE TABLE config');
-$pdo->exec('TRUNCATE TABLE ordersLine');
-$pdo->exec('TRUNCATE TABLE status');
-$pdo->exec('TRUNCATE TABLE category');
-$pdo->exec('TRUNCATE TABLE beer');
-$pdo->exec('TRUNCATE TABLE orders');
-$pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
 echo "||||||||||||";
+
+
+
+/**
+ * remplissage des tables
+ */
+
+
 $faker = Faker\Factory::create('fr_FR');
 echo "||";
+
+
 $posts = [];
 $categories = [];
+
 echo "||";
+
+//post
 for ($i = 0; $i < 50; $i++) {
     $pdo->exec("INSERT INTO post SET
         name='{$faker->sentence()}',
         slug='{$faker->slug}',
-        created_at ='{$faker->date} {$faker->time}',
-        content='{$faker->paragraphs(rand(3, 15), true)}'");
+        content='{$faker->paragraphs(rand(3, 15), true)}',
+        created_at='{$faker->date} {$faker->time}'");
     $posts[] = $pdo->lastInsertId();
     echo "|";
 }
 
+//category
 for ($i = 0; $i < 5; $i++) {
     $pdo->exec("INSERT INTO category SET
         name='{$faker->sentence(3, false)}',
@@ -162,6 +176,7 @@ for ($i = 0; $i < 5; $i++) {
     echo "|";
 }
 
+//post_category
 foreach ($posts as $post) {
     $randomCategories = $faker->randomElements($categories, 2);
     foreach ($randomCategories as $category) {
@@ -172,7 +187,8 @@ foreach ($posts as $post) {
     }
 }
 
-$pdo->exec("INSERT INTO `beer` (`id`, `title`, `img`, `content`, `priceHT`) VALUES
+
+$pdo->exec("INSERT INTO `beer` (`id`, `title`, `img`, `content`, `price_ht`) VALUES
 (1, 'La Chouffe', 'https://www.beerwulf.com/globalassets/catalog/beerwulf/beers/la-chouffe-blonde-d-ardenne_opt.png?h=500&rev=899257661', 'Bière dorée légèrement trouble à mousse dense, avec un parfum épicé aux notes d’agrumes et de coriandre qui ressortent également au goût.', 1.91),
 (2, 'Duvel', 'https://www.beerwulf.com/globalassets/catalog/beerwulf/beers/duvel_opt.png?h=500&rev=899257661', 'Robe jaune pâle, légèrement trouble, avec une mousse blanche incroyablement riche. L’arôme associe le citron jaune, le citron vert et les épices. La saveur incorpore des agrumes frais, le sucre de l’alcool et une note épicée due au houblon qui tire sur le poivre. En dépit de son taux d’alcool, c’est une bière fraîche qui se déguste facilement. ', 1.66),
 (3, 'Duvel Tripel Hop', 'https://www.beerwulf.com/globalassets/catalog/beerwulf/beers/duvel-tripel-hop-citra.png?h=500&rev=39990364', 'Une variété supplémentaire de houblon est ajoutée à cette Duvel traditionnelle. Le HBC 291 lui procure un caractère légèrement plus épicé et poivré. Cette bière présente un fort taux d’alcool mais reste très facile à déguster grâce à ses arômes d’agrumes frais et acides, entre autres.', 2.24),
@@ -184,10 +200,24 @@ $pdo->exec("INSERT INTO `beer` (`id`, `title`, `img`, `content`, `priceHT`) VALU
 (9, 'Chimay Triple', 'https://www.beerwulf.com/globalassets/catalog/beerwulf/beers/chimay---wit_v2.png?h=500&rev=420719671', 'Robe de couleur doré clair, légèrement trouble avec une belle mousse blanche qui fera saliver les amateurs. Le nez et la bouche sont chargés de fruits comme le raisin et de levure. Une amertume ronde se dégage en fin de bouche.', 1.57);
 ");
 
-$pdo->exec("INSERT INTO config (tva, port, ship_limit) VALUES (1.2, 5.4, 30)");
+echo "||||||||||";
 
-$pdo->exec("INSERT INTO status (`status`) VALUES 
+$pdo->exec("INSERT INTO config (tva, port, ship_limit) VALUES (1.2, 5.4, 30)");
+echo "||";
+
+$pdo->exec("INSERT INTO status (`label`) VALUES 
   ('En attente de paiement'),
   ('En cours de préparation'),
   ('Expédiée'),
   ('Terminée')");
+
+$password = password_hash('admin', PASSWORD_BCRYPT);
+
+$pdo->exec(
+        "INSERT INTO user SET
+        mail='admin@admin.fr',
+        password='{$password}',
+        token='coucou',
+        verify='1'");
+
+echo "||||]";

@@ -12,6 +12,7 @@ class PostController extends Controller
         $this->loadModel('category');
     }
 
+
     public function all()
     {
         $paginatedQuery = new PaginatedQueryAppController(
@@ -34,7 +35,6 @@ class PostController extends Controller
 
     public function show(string $slug, int $id)
     {
-
         $post = $this->post->find($id);
 
         if (!$post) {

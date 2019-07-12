@@ -3,7 +3,7 @@ namespace Core\Model;
 
 use \Core\Controller\Database\DatabaseController;
 
-class Table
+abstract class Table
 {
     protected $db;
 
@@ -14,11 +14,32 @@ class Table
         $this->db = $db;
 
         if (is_null($this->table)) {
-            //App\Model\Table\ClassTable
-            $parts = explode('\\', get_class($this));
-            $class_name = end($parts);
-            $this->table = strtolower(str_replace('Table', '', $class_name));
+            $this->table = $this->extractTableName();
         }
+    }
+
+    public function extractTableName(): string
+    {
+            //App\Model\Table\MotMotMotusTable
+            $parts = explode('\\', get_class($this));
+            // [ "App", "Model", "Table", "MotMotMotusTable" ]
+            $class_name = end($parts);
+            //MotMotMotusTable
+            $class_name = str_replace('Table', '', $class_name);
+            //MotMotMotus
+            $newTable = $class_name[0];
+            // $newTable = M
+            for ($i=1; $i < strlen($class_name) ; $i++) {
+               if ( ctype_upper($class_name[$i]) ){
+                   $newTable .= "_";
+               }
+               $newTable .= $class_name[$i];
+            }
+            // $newTable =  Mot_Mot_Motus
+
+            $class_name = strtolower($newTable);
+            // $newTable =  mot_mot_motus
+            return $class_name;
     }
 
     public function count()
