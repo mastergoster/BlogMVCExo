@@ -5,7 +5,8 @@ use \Core\Controller\Controller;
 
 class ShopController extends Controller
 {
-    public function __construct() {
+    public function __construct()
+    {
         $this->loadModel('beer');
     }
 
@@ -14,7 +15,8 @@ class ShopController extends Controller
         return $this->render('shop/index');
     }
 
-    public function all() {
+    public function all()
+    {
 
         $beers = $this->beer->all();
         
@@ -23,11 +25,12 @@ class ShopController extends Controller
         ]);
     }
 
-    public function purchaseOrder() {
+    public function purchaseOrder()
+    {
         
-        if(count($_POST) > 0) {
-            foreach($_POST['qty'] as $key => $value) {
-                if($value > 0) {
+        if (count($_POST) > 0) {
+            foreach ($_POST['qty'] as $key => $value) {
+                if ($value > 0) {
                     $ids[] = $key;
                     $qty[] = $value;
                 }
@@ -37,7 +40,7 @@ class ShopController extends Controller
             $beers = $this->beer->getAllInIds($ids);
 
             $orderTotal = 0;
-            foreach($beers as $key => $value) {
+            foreach ($beers as $key => $value) {
                 $orderTotal += $value->getPriceHt() * constant('TVA') * $qty[$key];
             }
             
@@ -56,7 +59,8 @@ class ShopController extends Controller
         ]);
     }
 
-    public function contact() {
+    public function contact()
+    {
         return $this->render('shop/contact', [
         ]);
     }

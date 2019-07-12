@@ -16,23 +16,28 @@ class ConfigEntity extends Entity
 
     private $ship_limit;
 
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function getTva() {
+    public function getTva()
+    {
         return $this->tva;
     }
 
-    public function getPort() {
+    public function getPort()
+    {
         return $this->port;
     }
 
-    public function getShipLimit() {
+    public function getShipLimit()
+    {
         return $this->ship_limit;
     }
 
-    public function getCreatedAt() {
+    public function getCreatedAt()
+    {
         return $this->created_at;
     }
 }

@@ -29,12 +29,12 @@ abstract class Table
             //MotMotMotus
             $newTable = $class_name[0];
             // $newTable = M
-            for ($i=1; $i < strlen($class_name) ; $i++) {
-               if ( ctype_upper($class_name[$i]) ){
+        for ($i=1; $i < strlen($class_name); $i++) {
+            if (ctype_upper($class_name[$i])) {
                    $newTable .= "_";
-               }
-               $newTable .= $class_name[$i];
             }
+                $newTable .= $class_name[$i];
+        }
             // $newTable =  Mot_Mot_Motus
 
             $class_name = strtolower($newTable);
@@ -57,25 +57,27 @@ abstract class Table
         return $this->query("SELECT * FROM {$this->table} WHERE $column=?", [$id], true);
     }
 
-    public function all() {
+    public function all()
+    {
         return $this->query("SELECT * FROM $this->table");
     }
 
-    public function create($fields, $class=false){
+    public function create($fields, $class = false)
+    {
         $sql_parts = [];
         $attributes = [];
-        if($class) {
+        if ($class) {
             $methods = get_class_methods($fields);
             $array = [];
-            foreach($methods as $value) {
-                if(strrpos($value, 'get') === 0) {
+            foreach ($methods as $value) {
+                if (strrpos($value, 'get') === 0) {
                     $column = strtolower(explode('get', $value)[1]);
                     $array[$column] = $fields->$value();
-                }                
+                }
             }
             $fields = $array;
         }
-        foreach($fields as $k => $v){
+        foreach ($fields as $k => $v) {
             $sql_parts[] = "$k = ?";
             $attributes[] = $v;
         }
@@ -83,10 +85,11 @@ abstract class Table
         return $this->query("INSERT INTO {$this->table} SET $sql_part", $attributes, true);
     }
 
-    public function update($id, $column, $fields){
+    public function update($id, $column, $fields)
+    {
         $sql_parts = [];
         $attributes = [];
-        foreach($fields as $k => $v){
+        foreach ($fields as $k => $v) {
             $sql_parts[] = "$k = ?";
             $attributes[] = $v;
         }
@@ -95,7 +98,8 @@ abstract class Table
         return $this->query("UPDATE {$this->table} SET $sql_part WHERE $column = ?", $attributes, true);
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         return $this->query("DELETE FROM {$this->table} WHERE id = ?", [$id], true);
     }
 

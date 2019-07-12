@@ -27,44 +27,54 @@ class UserEntity extends Entity
         return $this->id;
     }
 
-    public function getMail() {
+    public function getMail()
+    {
         return $this->mail;
     }
 
-    public function getPassword() {
+    public function getPassword()
+    {
         return $this->password;
     }
 
-    public function getVerify() {
+    public function getVerify()
+    {
         return $this->verify;
     }
 
-    public function getToken() {
+    public function getToken()
+    {
         return $this->token;
     }
 
-    public function getCreatedAt() {
+    public function getCreatedAt()
+    {
         return $this->created_at;
     }
 
-    public function setMail(string $mail) {
+    public function setMail(string $mail)
+    {
         $this->mail = $mail;
     }
 
-    public function setPassword(string $password) {
+    public function setPassword(string $password)
+    {
         $password = password_hash(htmlspecialchars($password), PASSWORD_BCRYPT);
         $this->password = $password;
     }
 
-    public function setToken($token) {
+    public function setToken($token)
+    {
         $this->token = $token;
     }
 
-    public function setCreatedAt($createdAt) {
+    public function setCreatedAt($createdAt)
+    {
         $this->created_at = $createdAt;
     }
 
-    public function setVerify($verify) {
+    public function setVerify($verify)
+    {
         $this->verify = $verify;
     }
 }

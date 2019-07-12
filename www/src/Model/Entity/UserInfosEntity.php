@@ -135,7 +135,7 @@ class UserInfosEntity extends Entity
         $this->zip_code = $zipCode;
     }
 
-    public function setCountry($country): void 
+    public function setCountry($country): void
     {
         $this->country = $country;
     }
