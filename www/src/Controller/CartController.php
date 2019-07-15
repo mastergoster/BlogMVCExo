@@ -8,16 +8,16 @@ class CartController extends Controller
 {
     public function __construct()
     {
-        $this->loadModel('orders_line');
+        $this->loadModel('OrderLine');
     }
 
     public function index()
     {
-        $products = $this->orders_line->getLinesWithProducts();
+        $products = $this->OrderLine->getLinesWithProducts();
 
         $priceTotalHT = 0;
         foreach ($products as $key => $value) {
-            $priceTotalHT += ($value->price * $value->getQty());
+            $priceTotalHT += ($value->getPriceHt * $value->getBeerQty());
         }
         
         return $this->render('cart/index', [
@@ -31,7 +31,7 @@ class CartController extends Controller
     */
     public function getProductsInCart()
     {
-        $_SESSION['cartNumber'] = $this->orders_line->getProductsInCart();
+        $_SESSION['cartNumber'] = $this->OrderLine->getProductsInCart();
         echo $_SESSION['cartNumber'];
     }
 
@@ -41,7 +41,7 @@ class CartController extends Controller
             $id = htmlspecialchars($_POST['id']);
             $qty = htmlspecialchars($_POST['qty']);
             
-            if ($this->orders_line->update($id, 'id', ['qty' => $qty])) {
+            if ($this->OrderLine->update($id, 'id', ['qty' => $qty])) {
                 echo 'OK';
                 die;
             } else {
@@ -56,7 +56,7 @@ class CartController extends Controller
     {
         if (count($_POST) > 0) {
             $id = htmlspecialchars($_POST['id']);
-            if ($this->orders_line->delete($id)) {
+            if ($this->OrderLine->delete($id)) {
                 echo 'OK';
                 die;
             } else {

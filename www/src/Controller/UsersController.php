@@ -39,24 +39,38 @@ class UsersController extends Controller
 
     public function subscribe()
     {
-        if (count($_POST) > 0) {
+       
             //Création d'un tableau regroupant mes champs requis
-            $requiredFields=['lastname', 'firstname', 'address', 'city', 'zipCode',
-            'country', 'phone', 'mail', 'password'];
-            
-            //On boucle sur le tableau requiredFields
-            foreach ($requiredFields as $key => $value) {
-                //On verifie que $_POST["firstname"](si $value="firstname) existe.
-                if (!$_POST[$value]) {
-                    //Si n'existe pas redirection vers page d'inscription
-                    header('location: /inscription');
-                    exit();// PAS OUBLIERRRRRRRRRRR!!!!!!!!
-                }
-            }
 
+            $form = new \Core\Controller\FormController();
+            $form->field('mail', ["require", "verify"]);
+            $form->field('password', ["require", "verify", "length" => 4 ]);
+           
+
+            $errors =  $form->hasErrors();
+        if ($errors["post"] != "no-data") {
+            $datas = $form->getDatas(); 
+            dd($datas);
+
+            //verifier mail et mailverify 
+            //verifier password et passwordverify
+
+            //verifier que l'adresse mail n'existe pas
+                // sinon quoi faire?
+            //crypter password
+            //cree token
+            //persiter en bdd
+            //evoyer mail de confirmation avec le token
+            //informer le clien quil var devoir valier son adresse mail
+
+
+
+
+
+            /*
             $user = new UserEntity();
             $user->hydrate($_POST);
-
+            
             $userInfos = new UserInfosEntity();
             $userInfos->hydrate($_POST);
 
@@ -82,7 +96,9 @@ class UsersController extends Controller
                     header('location: /login');
                     exit();
                 }
-            }
+            }*/
+
+
         }
         return $this->render('user/subscribe');
     }

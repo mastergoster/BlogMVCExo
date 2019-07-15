@@ -26,6 +26,12 @@ class RouterController
         return $this;
     }
 
+    public function match(string $uri, string $file, string $name): self
+    {
+        $this->router->map('GET|POST', $uri, $file, $name);
+        return $this;
+    }
+
     public function url(string $name, array $params = []): string
     {
         return $this->router->generate($name, $params);
