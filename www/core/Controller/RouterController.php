@@ -47,7 +47,7 @@ class RouterController
                 $controller = "App\\Controller\\" . ucfirst($controller) . "Controller";
                 //try{
 
-                (new $controller())->$methode(...array_values($match['params']));
+                echo (new $controller())->$methode(...array_values($match['params']));
                 //}catch(\Exception $e){
                 //    header($_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
                 //    exit();

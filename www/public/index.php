@@ -20,7 +20,7 @@ $app->getRouter($basePath)
     
     ->match('/inscription', 'Users#subscribe', 'usersSubscribe')
     
-    ->get('/login', 'Users#login', 'usersLogin')
+    ->get('/connexion', 'Users#login', 'usersLogin')
     ->get('/user/logout', 'users#logout', 'userLogout')
     ->get('/user/profile', 'users#profile', 'userProfile')
     ->get('/contact', 'Shop#contact', 'shopContact')

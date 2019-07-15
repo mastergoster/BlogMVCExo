@@ -2,6 +2,8 @@
 namespace App\Controller;
 
 use \Core\Controller\Controller;
+use \Core\Controller\MailController;
+use \App\Model\Table\UserTable;
 use \App\Model\Entity\UserEntity;
 use \App\Model\Entity\UserInfosEntity;
 
@@ -13,7 +15,7 @@ class UsersController extends Controller
         $this->loadModel('UserInfos');
     }
 
-    public function login(): void
+    public function login(): string
     {
         $message = false;
         if (count($_POST) > 1) {
@@ -27,7 +29,7 @@ class UsersController extends Controller
                 $message = "Adresse mail ou mot de passe incorrect";
             }
         }
-        $this->profile($message);
+        return $this->profile($message);
     }
 
     public function logout(): void
@@ -39,68 +41,47 @@ class UsersController extends Controller
 
     public function subscribe()
     {
-       
-            //Création d'un tableau regroupant mes champs requis
-
-            $form = new \Core\Controller\FormController();
-            $form->field('mail', ["require", "verify"]);
-            $form->field('password', ["require", "verify", "length" => 4 ]);
-           
-
-            $errors =  $form->hasErrors();
-        if ($errors["post"] != "no-data") {
-            $datas = $form->getDatas(); 
-            dd($datas);
-
+        //Création d'un tableau regroupant mes champs requis
+        $form = new \Core\Controller\FormController();
+        $form->field('mail', ["require", "verify"])
+            ->field('password', ["require", "verify", "length" => 8 ]);
+        $errors =  $form->hasErrors();
+        if (!isset($errors["post"])) {
+            $datas = $form->getDatas();
             //verifier mail et mailverify 
             //verifier password et passwordverify
-
-            //verifier que l'adresse mail n'existe pas
-                // sinon quoi faire?
-            //crypter password
-            //cree token
-            //persiter en bdd
-            //evoyer mail de confirmation avec le token
-            //informer le clien quil var devoir valier son adresse mail
-
-
-
-
-
-            /*
-            $user = new UserEntity();
-            $user->hydrate($_POST);
-            
-            $userInfos = new UserInfosEntity();
-            $userInfos->hydrate($_POST);
-
-            if ($user->getMail() == $_POST["mailVerify"]) {// Comparaison d'égalité
-                if (password_verify($_POST["passwordVerify"], $user->getPassword())) {// Comparaison d'égalité
-                    //Création d'une date
-                    $date = new \DateTime('NOW');
-                    $date = $date->format('Y-m-d H:i:s');
-        
-                    $user->setToken(substr(md5(uniqid()), 0, 10));//Stockage du token dans $fieds["token"]
-                    $user->setCreatedAt($date);//Stockage de date dans $fields['createdAt']
-                    $user->setVerify(1);
-
-                    //Appel de la methode create de la Table Parente (core/Table.php)
-                    if ($this->user->create($user, true)) {
-                        $userInfos->setUser_id($this->user->last());
-                        $this->UserInfos->create($userInfos, true);
-
-                        $_SESSION['success'] = "Votre inscription à bien été prise en compte";
-                    } else {
-                        $_SESSION['error'] = 'une erreur s\'est produite';
-                    }
-                    header('location: /login');
-                    exit();
+            if(empty($errors)){
+                /**@var UserTable $userTable */
+                $userTable = $this->user;
+                //verifier que l'adresse mail n'existe pas
+                if($userTable->find($datas["mail"], "mail")){
+                    // sinon quoi faire?
+                    throw new \Exception("utilisateur existe deja");
                 }
-            }*/
-
-
+                //crypter password
+                $datas["password"] = password_hash($datas["password"], PASSWORD_BCRYPT);
+                //cree token
+                $datas["token"] = substr(md5(uniqid()), 0, 10);
+                //persiter en bdd
+                if(!$userTable->newUser($datas)){
+                    throw new \Exception("erreur de base de donné");
+                }
+                //informer le client qu'il enregistré
+                //envoyer mail de confirmation avec le token
+                $mail = new MailController();
+                $mail->object("validez votre compte")
+                    ->to($datas["mail"])
+                    ->message('confirmation', compact("datas"))
+                    ->send();
+                //informer le client quil var devoir valider son adresse mail
+                header('location: '.$this->generateUrl("usersLogin"));
+                exit();
+            }
+            unset($datas["password"]);
+        }else{
+            unset($errors);
         }
-        return $this->render('user/subscribe');
+        return $this->render('user/subscribe', compact("errors", "datas"));
     }
 
     public function profile($message = null)

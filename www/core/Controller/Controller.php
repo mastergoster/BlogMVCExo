@@ -8,11 +8,11 @@ class Controller
 
     private $app;
 
-    protected function render(string $view, array $variables = [])
+    protected function render(string $view, array $variables = []): string
     {
 
         $variables["debugTime"] = $this->getApp()->getDebugTime();
-        echo $this->getTwig()->render(
+        return $this->getTwig()->render(
             $view . '.twig',
             $variables
         );
