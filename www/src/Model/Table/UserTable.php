@@ -29,10 +29,10 @@ class UserTable extends Table
     {
         $sqlParts = [];
         foreach ($datas as $nom => $value) {
-           $sqlParts[] = "$nom = :$nom";
+            $sqlParts[] = "$nom = :$nom";
         }
 
-        $statement = "INSERT INTO {$this->table} SET ".join(', ' , $sqlParts);
+        $statement = "INSERT INTO {$this->table} SET ".join(', ', $sqlParts);
         return $this->query($statement, $datas);
     }
 }

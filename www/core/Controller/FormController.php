@@ -1,8 +1,6 @@
 <?php
 namespace Core\Controller;
 
-
-
 class FormController
 {
 
@@ -20,23 +18,22 @@ class FormController
     {
         if (count($_POST) > 0) {
              $this->postDatas = $_POST;
-        }else{
-            $this->addError("post" , "no-data");
+        } else {
+            $this->addError("post", "no-data");
         }
     }
 
     public function field(string $field, array $constraints = []): self
     {
         
-        foreach($constraints as $constraint => $value){
-            if(!is_string($constraint)){
+        foreach ($constraints as $constraint => $value) {
+            if (!is_string($constraint)) {
                 $constraints[$value] = true;
-                unset($constraints[$constraint] );
+                unset($constraints[$constraint]);
             }
         }
         $this->fields[$field] =  $constraints;
         return $this;
-
     }
     
 
@@ -54,22 +51,19 @@ class FormController
 
     private function verifyErrors(): void
     {
-        if(!$this->isVerify){
-            foreach($this->fields as $field => $constraints){
-                if(count($constraints) <= 0 ){
+        if (!$this->isVerify) {
+            foreach ($this->fields as $field => $constraints) {
+                if (count($constraints) <= 0) {
                     $this->addData($field);
-                } 
+                }
                 foreach ($constraints as $constraint => $value) {
                     $constraintMethod = 'error'.ucfirst(strtolower($constraint));
-                    if(method_exists($this, $constraintMethod)){
+                    if (method_exists($this, $constraintMethod)) {
                         $this->$constraintMethod($field, $value);
-                    }else{
+                    } else {
                         throw new \Exception("la contrainte {$constraint} n'existe pas");
                     }
-                        
-                
-                    
-                } 
+                }
             }
             $this->isVerify = true;
         }
@@ -77,19 +71,19 @@ class FormController
 
     private function errorRequire(string $field): void
     {
-        if(!empty($this->postDatas[$field])){
+        if (!empty($this->postDatas[$field])) {
             $this->addData($field);
-        }else{
+        } else {
             $this->addError($field, "le champ {$field} est requis");
         }
     }
 
     private function errorVerify(string $field): void
     {
-        if(isset($this->postDatas[$field."Verify"])){
-            if($this->postDatas[$field."Verify"] == $this->postDatas[$field]){
+        if (isset($this->postDatas[$field."Verify"])) {
+            if ($this->postDatas[$field."Verify"] == $this->postDatas[$field]) {
                 $this->addData($field);
-            }else{
+            } else {
                 $this->addError($field, "les champs {$field} doivent correspondre");
             }
         }
@@ -97,9 +91,9 @@ class FormController
 
     private function errorLength(string $field, $value): void
     {
-        if(strlen($this->postDatas[$field]) >= $value){
+        if (strlen($this->postDatas[$field]) >= $value) {
             $this->addData($field);
-        }else{
+        } else {
             $this->addError($field, "le champ {$field} doit avoir au minimum {$value} caractères");
         }
     }
@@ -109,10 +103,9 @@ class FormController
 
     private function addData(string $field): void
     {
-        if(!isset($this->errors[$field])){
+        if (!isset($this->errors[$field])) {
             $this->datas[$field] = htmlspecialchars($this->postDatas[$field]);
         }
-        
     }
 
     private function addError(string $field, string $message): void
@@ -120,6 +113,4 @@ class FormController
         unset($this->datas[$field]);
         $this->errors[$field][] = $message;
     }
-
-
 }

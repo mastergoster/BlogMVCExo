@@ -4,8 +4,6 @@ namespace App\Controller;
 use \Core\Controller\Controller;
 use \Core\Controller\MailController;
 use \App\Model\Table\UserTable;
-use \App\Model\Entity\UserEntity;
-use \App\Model\Entity\UserInfosEntity;
 
 class UsersController extends Controller
 {
@@ -41,6 +39,7 @@ class UsersController extends Controller
 
     public function subscribe()
     {
+
         //Création d'un tableau regroupant mes champs requis
         $form = new \Core\Controller\FormController();
         $form->field('mail', ["require", "verify"])
@@ -48,13 +47,13 @@ class UsersController extends Controller
         $errors =  $form->hasErrors();
         if (!isset($errors["post"])) {
             $datas = $form->getDatas();
-            //verifier mail et mailverify 
+            //verifier mail et mailverify
             //verifier password et passwordverify
-            if(empty($errors)){
+            if (empty($errors)) {
                 /**@var UserTable $userTable */
                 $userTable = $this->user;
                 //verifier que l'adresse mail n'existe pas
-                if($userTable->find($datas["mail"], "mail")){
+                if ($userTable->find($datas["mail"], "mail")) {
                     // sinon quoi faire?
                     throw new \Exception("utilisateur existe deja");
                 }
@@ -63,10 +62,11 @@ class UsersController extends Controller
                 //cree token
                 $datas["token"] = substr(md5(uniqid()), 0, 10);
                 //persiter en bdd
-                if(!$userTable->newUser($datas)){
+                if (!$userTable->newUser($datas)) {
                     throw new \Exception("erreur de base de donné");
                 }
-                //informer le client qu'il enregistré
+                //prevenir de l'enregistrement
+                $this->flash()->addSuccess("vous êtes bien enregistré");
                 //envoyer mail de confirmation avec le token
                 $mail = new MailController();
                 $mail->object("validez votre compte")
@@ -74,11 +74,12 @@ class UsersController extends Controller
                     ->message('confirmation', compact("datas"))
                     ->send();
                 //informer le client quil var devoir valider son adresse mail
+                $this->flash()->addSuccess("vous avez reçu un mail");
                 header('location: '.$this->generateUrl("usersLogin"));
                 exit();
             }
             unset($datas["password"]);
-        }else{
+        } else {
             unset($errors);
         }
         return $this->render('user/subscribe', compact("errors", "datas"));

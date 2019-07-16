@@ -11,7 +11,7 @@ class TextControllerTest extends TestCase
         $_POST = ["name"=> "julien"];
 
         $form = new FormController();
-        $this->assertEquals( [], $form->hasErrors());
+        $this->assertEquals([], $form->hasErrors());
     }
 
     public function testNewWithoutPost()
@@ -28,7 +28,6 @@ class TextControllerTest extends TestCase
         $_POST = ["name"=> "julien"];
         $form = new FormController();
         $this->assertEquals([], $form->getDatas());
-
     }
 
     public function testGetDatasWithFields()
@@ -39,15 +38,15 @@ class TextControllerTest extends TestCase
             ->field('firstname');
         $this->assertEquals(
             ["firstname"=> "julien", "lastname"=> "dugrais"],
-             $form->getDatas()
-            );
+            $form->getDatas()
+        );
     }
 
     public function testFieldsChained()
     {
         $_POST = ["firstname"=> "julien", "lastname"=> "dugrais"];
         $form = new FormController();
-        $this->assertEquals( $form, $form->field("lastname"));
+        $this->assertEquals($form, $form->field("lastname"));
     }
 
     
@@ -90,8 +89,8 @@ class TextControllerTest extends TestCase
         $this->assertArrayHasKey("firstname", $errors);
         $this->assertEquals(
             ["les champs firstname doivent correspondre"],
-             $errors["firstname"]
-            );
+            $errors["firstname"]
+        );
     }
     
     public function testGetDatasAndErrorsWithFieldsLength()
@@ -113,8 +112,8 @@ class TextControllerTest extends TestCase
         $this->assertArrayHasKey("password", $errors);
         $this->assertEquals(
             ["le champ password doit avoir au minimum 8 caractères"],
-             $errors["password"]
-            );
+            $errors["password"]
+        );
     }
 
     public function testGetDatasAndErrorsWithFieldsConstraints()
@@ -136,8 +135,8 @@ class TextControllerTest extends TestCase
         $this->assertArrayHasKey("password", $errors);
         $this->assertEquals(
             ["le champ password doit avoir au minimum 8 caractères"],
-             $errors["password"]
-            );
+            $errors["password"]
+        );
     }
 
     public function testGetDatasAndErrorsWithMultipleFieldsConstraints()
@@ -151,12 +150,11 @@ class TextControllerTest extends TestCase
         $this->assertContains(
             "le champ password est requis",
             $errors["password"]
-            );
+        );
         $this->assertContains(
-             "le champ password doit avoir au minimum 8 caractères",
-             $errors["password"]
-            );
-       
+            "le champ password doit avoir au minimum 8 caractères",
+            $errors["password"]
+        );
     }
 
     public function testConstraintNotExist()
@@ -168,10 +166,5 @@ class TextControllerTest extends TestCase
         $this->expectExceptionMessage("la contrainte trucQuiExistePas n'existe pas");
         
         $form->hasErrors();
-       
-       
     }
-
-    
-
 }

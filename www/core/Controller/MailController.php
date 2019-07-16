@@ -12,20 +12,20 @@ class MailController extends Controller
 
     public function __construct(string $object = null)
     {
-        if(getenv('ENV_DEV')){
+        if (getenv('ENV_DEV')) {
             //dev
             $transport = new \Swift_SmtpTransport(
                 getenv('CONTAINER_NAME').'.mailcatcher',
-                 1025
-                );
+                1025
+            );
             $sender = ["mail@test.fr"=>"adminDev"];
-            
-        }else{
+        } else {
             //prod
             $transport = new \Swift_SmtpTransport(
                 'smtp.gmail.com',
-                 587, 'tls'
-                );
+                587,
+                'tls'
+            );
             $transport->setUsername(getenv('GMAIL_MAIL'));
             $transport->setPassword(getenv('GMAIL_PASSWORD'));
             $sender = [getenv('GMAIL_MAIL') => getenv('GMAIL_PSEUDO')];
@@ -61,12 +61,12 @@ class MailController extends Controller
     {
         $this->message->setBody(
             $this->render("email/".$template.".html", $datas),
-             "text/html"
-            );
+            "text/html"
+        );
         $this->message->addPart(
             $this->render("email/".$template.".txt", $datas),
-             "text/plain"
-            );
+            "text/plain"
+        );
         return $this;
     }
 }

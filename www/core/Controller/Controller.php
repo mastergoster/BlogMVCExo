@@ -1,12 +1,15 @@
 <?php
 namespace Core\Controller;
 
+use Core\Controller\Session\FlashService;
+
 class Controller
 {
 
     private $twig;
 
     private $app;
+
 
     protected function render(string $view, array $variables = []): string
     {
@@ -45,5 +48,10 @@ class Controller
     protected function loadModel(string $nameTable): void
     {
         $this->$nameTable = $this->getApp()->getTable($nameTable);
+    }
+
+    protected function flash(): FlashService
+    {
+        return $this->getApp()->flash();
     }
 }
