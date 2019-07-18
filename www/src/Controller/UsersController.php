@@ -17,6 +17,18 @@ class UsersController extends Controller
 
     public function login(): string
     {
+        $uri = $this->getUri('category', [
+            "slug" => 'dolorem-sit-porro-labore-quas-a-eligendi-pariatur',
+            "id" => 2
+        ]);
+        $uri2 = URLController::getUri('category', [
+            "slug" => 'dolorem-sit-porro-labore-quas-a-eligendi-pariatur',
+            "id" => 2
+        ]);
+
+        dump($uri);
+        dump($uri2);
+        dd("http://localhost:5012/category/dolorem-sit-porro-labore-quas-a-eligendi-pariatur-2");
         $form = new FormController();
         $form->field('mail', ["require"])
             ->field('password', ["require"]);
@@ -25,20 +37,28 @@ class UsersController extends Controller
 
         //verifier si post
         if (!isset($errors["post"])) {
-            $form->getDatas();
+            $datas = $form->getDatas();
+
+            //verifier si erreurs
+            if (empty($errors)) {
+                //verifier que user existe
+                //verifier que user et password
+                $user = $this->user->getUser($datas["mail"], $datas["password"]);
+                if ($user) {
+                    // machin connecter
+                    // message bien connecter
+                    // machin redirection
+                    $this->flash()->addSuccess("le POST est super top");
+                } else {
+                    $this->flash()->addAlert("pas cool");
+                }
+            } else {
+                $this->flash()->addAlert("appprend a remplir un formulaire");
+            }
+            unset($datas['password']);
         }
-
-        //verifier si erreurs
-
-
-        //verifier que user existe
-        //verifier que user et password ====
-        // machin connecter
-        // message bien connecter
-        // machin redirection
-
         //erreur afficher message
-        return $this->render('user/login');
+        return $this->render('user/login', compact("datas"));
     }
 
     /**

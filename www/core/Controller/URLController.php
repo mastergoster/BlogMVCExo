@@ -1,4 +1,5 @@
 <?php
+
 namespace Core\Controller;
 
 class URLController
@@ -15,7 +16,7 @@ class URLController
         if (!filter_var($_GET[$name], FILTER_VALIDATE_INT)) {
             throw new \Exception("Le paramètre '$name' dans l'url n'est pas un entier");
         }
-        return (int)$_GET[$name];
+        return (int) $_GET[$name];
     }
 
     public static function getPositiveInt(string $name, ?int $default = null): ?int
@@ -25,5 +26,19 @@ class URLController
             throw new \Exception("Le paramètre '$name' dans l'url n'est pas un entier positif");
         }
         return $param;
+    }
+
+    /**
+     * génère une uri entière :) avec http et tout et tout
+     *
+     * @param string $cible
+     * @return string
+     */
+    public function getUri(string $name, array $params = []): string
+    {
+        $uri = $_SERVER["HTTP_X_FORWARDED_PROTO"] . "://" . $_SERVER["HTTP_HOST"];
+        $folder = $this->generateUrl($name, $params);
+
+        return $uri . "/" . $folder;
     }
 }

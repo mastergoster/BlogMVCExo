@@ -14,7 +14,7 @@
 
 <body>
 	<header class="menu">
-		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<nav class="vh-10 navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="/"><i class="fa fa-home h1"></i></a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
 				aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,7 +40,7 @@
 					</li>
 					{% else %}
 					<li class="nav-item">
-						<a class="nav-link" href="/login">Connexion</a>
+						<a class="nav-link" href="/connexion">Connexion</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="/inscription">Inscription</a>
@@ -61,7 +61,7 @@
 		</nav>
 	</header>
 
-	<body>
+	<section class="body">
 		{% for success in flash("success") %}
 		<div class="alert alert-success text-center col-4 offset-4 mt-2" role="alert">
 			{{ success }}
@@ -75,9 +75,9 @@
 
 
 		{% block body %}{% endblock %}
-	</body>
+	</section>
 	<footer>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<nav class="vh-10 navbar navbar-expand-lg navbar-dark bg-primary">
 			<div class="collapse navbar-collapse" id="navbarColor01">
 				<ul class="navbar-nav mr-auto">
 					<li class="nav-item active">

@@ -2,6 +2,13 @@
 header nav div ul li {
   font-size: 1.3vw;
 }
+
+.body{
+  min-height: 80vh;
+}
+.vh-10{
+  height: 10vh;
+}
 /* ACCUEIL */
 .accueil header {
   height: 90vh;
