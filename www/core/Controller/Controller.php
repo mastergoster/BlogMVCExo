@@ -1,7 +1,9 @@
 <?php
+
 namespace Core\Controller;
 
 use Core\Controller\Session\FlashService;
+use Core\Extension\Twig\FlashExtension;
 
 class Controller
 {
@@ -28,6 +30,7 @@ class Controller
             $this->twig = new \Twig\Environment($loader);
             $this->twig->addGlobal('session', $_SESSION);
             $this->twig->addGlobal('constant', get_defined_constants());
+            $this->twig->addExtension(new FlashExtension());
         }
         return $this->twig;
     }

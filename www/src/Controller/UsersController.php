@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Controller;
 
 use \Core\Controller\Controller;
 use \Core\Controller\MailController;
 use \App\Model\Table\UserTable;
+use Core\Controller\FormController;
 
 class UsersController extends Controller
 {
@@ -15,74 +17,106 @@ class UsersController extends Controller
 
     public function login(): string
     {
-        $message = false;
-        if (count($_POST) > 1) {
-            $password = htmlspecialchars($_POST['password']);
-            $user = $this->user->getUser(htmlspecialchars($_POST['mail']), $password);
-            if ($user) {
-                $_SESSION['user'] = $user;
-                header('location: /');
-                exit();
-            } else {
-                $message = "Adresse mail ou mot de passe incorrect";
-            }
-        }
-        return $this->profile($message);
-    }
+        $form = new FormController();
+        $form->field('mail', ["require"])
+            ->field('password', ["require"]);
 
-    public function logout(): void
-    {
-        unset($_SESSION['user']);
-        header('location: /');
-        exit();
-    }
-
-    public function subscribe()
-    {
-
-        //Création d'un tableau regroupant mes champs requis
-        $form = new \Core\Controller\FormController();
-        $form->field('mail', ["require", "verify"])
-            ->field('password', ["require", "verify", "length" => 8 ]);
         $errors =  $form->hasErrors();
+
+        //verifier si post
         if (!isset($errors["post"])) {
+            $form->getDatas();
+        }
+
+        //verifier si erreurs
+
+
+        //verifier que user existe
+        //verifier que user et password ====
+        // machin connecter
+        // message bien connecter
+        // machin redirection
+
+        //erreur afficher message
+        return $this->render('user/login');
+    }
+
+    /**
+     * Affichage de la vu d'inscription 
+     * et du traitement du formulaire inscription
+     *
+     * @return string
+     */
+    public function subscribe(): string
+    {
+
+        //Création d'un tableau regroupant les champs requis
+        $form = new FormController();
+        //ajouter des champs avec contraintes
+        $form->field('mail', ["require", "verify"])
+            ->field('password', ["require", "verify", "length" => 8]);
+
+        //recuperer errors du formulaire
+        $errors =  $form->hasErrors();
+        //verifier si il y a une action de POST
+        if (!isset($errors["post"])) {
+            //recuperer datas du formulaire
             $datas = $form->getDatas();
-            //verifier mail et mailverify
-            //verifier password et passwordverify
+            //Verifie qu'il ny ai pas d'erreur dans les contraintes
+            //des champs
             if (empty($errors)) {
+                //recuperer la table userTable
                 /**@var UserTable $userTable */
                 $userTable = $this->user;
-                //verifier que l'adresse mail n'existe pas
+                //verifier que l'adresse mail n'existe pas en base de donné
                 if ($userTable->find($datas["mail"], "mail")) {
-                    // sinon quoi faire?
+                    // lève une exception qui devra être  gérée
+                    //TODO : message flash + redirection?
                     throw new \Exception("utilisateur existe deja");
                 }
-                //crypter password
+                //crypter password via un méhtode globale pour tout le site?
                 $datas["password"] = password_hash($datas["password"], PASSWORD_BCRYPT);
-                //cree token
+                //cree token via un méhtode globale pour tout le site?
                 $datas["token"] = substr(md5(uniqid()), 0, 10);
-                //persiter en bdd
+                //cree une nouvelle utilisatrice en base de donnée
+                //avec les données du tableau data
                 if (!$userTable->newUser($datas)) {
+                    //erreure de sauvegarde en base de donnée
+                    //TODO : cree une page 500??
                     throw new \Exception("erreur de base de donné");
                 }
-                //prevenir de l'enregistrement
+                //Message flash pour prevenir du bon l'enregistrement
                 $this->flash()->addSuccess("vous êtes bien enregistré");
                 //envoyer mail de confirmation avec le token
                 $mail = new MailController();
+                //écriture du sujet et du mail
                 $mail->object("validez votre compte")
                     ->to($datas["mail"])
                     ->message('confirmation', compact("datas"))
                     ->send();
-                //informer le client quil var devoir valider son adresse mail
+                //informer le client via un message flash 
+                //qu'il var devoir valider son adresse mail
                 $this->flash()->addSuccess("vous avez reçu un mail");
-                header('location: '.$this->generateUrl("usersLogin"));
+                //rediriger le client sur la pgae de connexion grace au generateur d'url
+                //TODO : Methode Globale 
+                //$this->app->location($this->generateUrl("usersLogin"), 'code erreur')
+                //qui fait le exit aussi!!!!
+                header('location: ' . $this->generateUrl("usersLogin"));
+                //stoper l'execution du code php
                 exit();
+                //fin de la partie sans erreurs
             }
+            //supression du mot de passe dans le tableau datas
             unset($datas["password"]);
         } else {
+            //supression du tableau errors si il n'y a pas eu de post
             unset($errors);
         }
+        //appel du ficher twig grace a la methe render
+        //qui prend en paramètre le chemin de la vue 
+        //et en 2eme paramètre les variables pour la vue
         return $this->render('user/subscribe', compact("errors", "datas"));
+        //fin de ma methode subscribe
     }
 
     public function profile($message = null)
@@ -96,7 +130,7 @@ class UsersController extends Controller
             $page = 'Connexion';
             $userInfos = false;
         }
-        return $this->render('user/'.$file, [
+        return $this->render('user/' . $file, [
             'page' => $page,
             'message' => $message,
             'userInfos' => $userInfos
@@ -107,16 +141,16 @@ class UsersController extends Controller
     {
 
         if (count($_POST) > 0) {
-            $id = (int) array_pop($_POST);//Stockage de la dernière case de $_POST dans $id
+            $id = (int) array_pop($_POST); //Stockage de la dernière case de $_POST dans $id
             //Mise à jours bdd grace à methode update de /core/Table.php
             $bool = $this->UserInfos->update($id, 'user_id', $_POST);
             //Mise à jours de la SESSION['user']
             $user = $this->user->getUserByid($id);
             $_SESSION['user'] = $user;
-            
+
             //Appel de la methode profile de ce controller pour redirection
             $this->profile('Votre profil a bien été mis à jour');
-           
+
             exit();
         }
     }
@@ -144,7 +178,7 @@ class UsersController extends Controller
             } else {
                 $message = 'Mot de passe erroné';
             }
-            return $this->profile($message);//Appel de la methode profile de ce controller pour redirection
+            return $this->profile($message); //Appel de la methode profile de ce controller pour redirection
             exit();
         }
     }
