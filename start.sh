@@ -14,11 +14,11 @@ docker-compose -f docker-compose.yml up -d
 
 sleep 4;
 
-docker exec labiere composer update
+docker exec $CONTAINER_NAME composer update
 
 sleep 4;
 
-docker exec labiere php commande/createsql.php
+docker exec $CONTAINER_NAME commande/createsql
 
 echo
 echo "#-----------------------------------------------------------"

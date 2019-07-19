@@ -1,7 +1,35 @@
-<?php
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+if(php_sapi_name()!= "cli")
+{
+  fwrite(STDERR,
+  PHP_EOL."Fichier uniquement pour ligne de commande".PHP_EOL);
+  die(1);
+}
+
+$demo = false;
+foreach($argv as $value)
+{
+  if($value === "--demo")
+  {
+    $demo = true;
+  }
+  if($value === "-h" || $value === "--help")
+  {
+    echo PHP_EOL."Pour insérer les données de demo utilisez le flag --demo".PHP_EOL;
+    exit();
+  }
+}
+
 require_once '/var/www/vendor/autoload.php';
 
-$pdo = new PDO('mysql:host=labiere.mysql;dbname=blog', 'userblog', 'blogpwd');
+$dbname = getenv('MYSQL_DATABASE');
+$dbuser = getenv('MYSQL_USER');
+$dbpassword = getenv('MYSQL_PASSWORD');
+$dbcontainer = getenv('CONTAINER_MYSQL');
+
+$pdo = new PDO("mysql:host=$dbcontainer;dbname=$dbname", $dbuser, $dbpassword);
 
 /**
 * Suppression de table
@@ -138,7 +166,7 @@ $pdo->exec("CREATE TABLE `config` (
   PRIMARY KEY(id)
 )");
 
-echo "||||||||||||";
+echo "||||||||||||]";
 
 
 
@@ -146,9 +174,12 @@ echo "||||||||||||";
  * remplissage des tables
  */
 
+if($demo == true){
+
+  echo PHP_EOL."Mode Demo actif !".PHP_EOL;
 
 $faker = Faker\Factory::create('fr_FR');
-echo "||";
+echo "[||";
 
 
 $posts = [];
@@ -220,4 +251,5 @@ $pdo->exec(
         token='coucou',
         verify='1'");
 
-echo "||||]";
+echo "||||]".PHP_EOL;
+}
