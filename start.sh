@@ -14,7 +14,7 @@ docker-compose -f docker-compose.yml up -d
 
 sleep 4;
 
-#docker exec $CONTAINER_NAME composer update
+docker exec $CONTAINER_NAME composer update
 
 sleep 4;
 

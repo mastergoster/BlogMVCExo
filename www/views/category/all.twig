@@ -1,10 +1,9 @@
 {% extends "layout/default.twig" %}
 
-
 {% block title %}{{ title }}{% endblock %}
 
-
-{% block content %}
+{% block body %}
+{{ parent() }}
 <ul>
     {% for category in categories %}
     <li><a href="{{ category.url }}">{{ category.name }}</a></li>

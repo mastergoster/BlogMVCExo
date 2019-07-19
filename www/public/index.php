@@ -17,6 +17,7 @@ $app->getRouter($basePath)
     ->get('/', 'Shop#index', 'shopIndex')
     ->get('/boutique', 'Shop#all', 'shopAll')
     ->get('/boutique/commande', 'Shop#purchaseOrder', 'shopPurchaseOrder')
+    ->get('/validation/[*:token]', 'Auth#validate', 'validate')
 
     ->match('/inscription', 'Users#subscribe', 'usersSubscribe')
     ->match('/connexion', 'Users#login', 'usersLogin')
