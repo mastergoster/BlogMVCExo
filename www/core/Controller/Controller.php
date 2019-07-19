@@ -4,8 +4,9 @@ namespace Core\Controller;
 
 use Core\Controller\Session\FlashService;
 use Core\Extension\Twig\FlashExtension;
+use Core\Extension\Twig\URIExtension;
 
-class Controller
+abstract class Controller
 {
 
     private $twig;
@@ -31,6 +32,8 @@ class Controller
             $this->twig->addGlobal('session', $_SESSION);
             $this->twig->addGlobal('constant', get_defined_constants());
             $this->twig->addExtension(new FlashExtension());
+            $this->twig->addExtension(new URIExtension());
+
         }
         return $this->twig;
     }
@@ -56,5 +59,10 @@ class Controller
     protected function flash(): FlashService
     {
         return $this->getApp()->flash();
+    }
+
+    protected function getUri(string $name, array $params = []): string
+    {
+        return  URLController::getUri($name, $params);
     }
 }

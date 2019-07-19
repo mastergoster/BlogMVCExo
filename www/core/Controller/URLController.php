@@ -2,7 +2,7 @@
 
 namespace Core\Controller;
 
-class URLController
+class URLController 
 {
     public static function getInt(string $name, ?int $default = null): ?int
     {
@@ -34,11 +34,13 @@ class URLController
      * @param string $cible
      * @return string
      */
-    public function getUri(string $name, array $params = []): string
+    public static function getUri(string $name, array $params = []): string
     {
-        $uri = $_SERVER["HTTP_X_FORWARDED_PROTO"] . "://" . $_SERVER["HTTP_HOST"];
-        $folder = $this->generateUrl($name, $params);
+        
+        $uri = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["HTTP_HOST"];
+        //$folder = $this->generateUrl($name, $params);
+        $folder = \App\App::getInstance()->getRouter()->url($name, $params);
 
-        return $uri . "/" . $folder;
+        return $uri. $folder;
     }
 }
