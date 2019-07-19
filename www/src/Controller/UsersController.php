@@ -18,18 +18,7 @@ class UsersController extends Controller
 
     public function login(): string
     {
-        $uri = $this->getUri('category', [
-            "slug" => 'dolorem-sit-porro-labore-quas-a-eligendi-pariatur',
-            "id" => 2
-        ]);
-        $uri2 = URLController::getUri('category', [
-            "slug" => 'dolorem-sit-porro-labore-quas-a-eligendi-pariatur',
-            "id" => 2
-        ]);
 
-        dump($uri);
-        dump($uri2);
-        dump("http://localhost:5012/category/dolorem-sit-porro-labore-quas-a-eligendi-pariatur-2");
         $form = new FormController();
         $form->field('mail', ["require"])
             ->field('password', ["require"]);
