@@ -35,4 +35,10 @@ class UserTable extends Table
         $statement = "INSERT INTO {$this->table} SET ".join(', ', $sqlParts);
         return $this->query($statement, $datas);
     }
+
+    public function getUserByToken($token)
+    {
+        return $this->query("SELECT * FROM $this->table
+        WHERE $this->table.token = ?", [$token], true);
+    }
 }

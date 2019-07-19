@@ -43,7 +43,7 @@ class UsersController extends Controller
                     $this->flash()->addAlert("pas cool");
                 }
             } else {
-                $this->flash()->addAlert("appprend a remplir un formulaire");
+                $this->flash()->addAlert("apprend a remplir un formulaire");
             }
             unset($datas['password']);
         }
