@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use \Core\Controller\Controller;
+use \Core\Controller\URLController;
 use \Core\Controller\MailController;
 use \App\Model\Table\UserTable;
 use Core\Controller\FormController;
@@ -28,7 +29,7 @@ class UsersController extends Controller
 
         dump($uri);
         dump($uri2);
-        dd("http://localhost:5012/category/dolorem-sit-porro-labore-quas-a-eligendi-pariatur-2");
+        dump("http://localhost:5012/category/dolorem-sit-porro-labore-quas-a-eligendi-pariatur-2");
         $form = new FormController();
         $form->field('mail', ["require"])
             ->field('password', ["require"]);
